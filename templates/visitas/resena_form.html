@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Reseñar {{ local.nombre }} — Joyas Ocultas{% endblock %}
+{% block content %}
+<section class="jo-auth-page">
+    <div class="jo-auth-card jo-reveal">
+        <h1 class="jo-h1">{{ local.nombre }}</h1>
+        <p class="jo-auth-subtitle">Tu reseña está verificada porque ya visitaste este lugar.</p>
+        <form method="post" class="jo-form">
+            {% csrf_token %}
+            <div class="jo-form-group">
+                <label>Calificación</label>
+                <div class="jo-star-select">
+                    {% for radio in form.calificacion %}
+                        {{ radio.tag }}
+                        <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}★</label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="jo-form-group">
+                <label for="{{ form.comentario.id_for_label }}">Comentario (opcional)</label>
+                {{ form.comentario }}
+            </div>
+            <button type="submit" class="jo-btn-primary" style="width:100%; justify-content:center;">Publicar reseña <i class="ti ti-check"></i></button>
+        </form>
+    </div>
+</section>
+{% endblock %}

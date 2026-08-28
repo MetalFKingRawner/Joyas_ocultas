@@ -1,0 +1,33 @@
+<div class="jo-cards">
+    {% for r in resultados %}
+    <a href="{% url 'locales:detalle' r.local.slug %}" class="jo-card">
+        <div class="jo-card-photo">
+            {% if r.local.fotos.first %}
+                <img src="{{ r.local.fotos.first.imagen.url }}" alt="{{ r.local.nombre }}">
+            {% else %}
+                <div class="jo-card-photo-placeholder">
+                    <i class="ti ti-photo"></i>
+                    Foto real de {{ r.local.nombre }} aquí
+                </div>
+            {% endif %}
+            {% if mood_seleccionado %}
+            <span class="jo-match-badge">{{ r.score }}% match</span>
+            {% endif %}
+            {% if r.abierto_ahora %}
+            <span class="jo-open-badge"><i class="ti ti-clock"></i> Abierto ahora</span>
+            {% endif %}
+        </div>
+        <div class="jo-card-body">
+            <div class="jo-card-top">
+                <span class="jo-h2">{{ r.local.nombre }}</span>
+                <span class="jo-gem-badge" style="background: {{ r.local.gema_principal.color_hex }};">
+                    {{ r.local.gema_principal.nombre }}
+                </span>
+            </div>
+            <p>{{ r.local.descripcion_corta }}</p>
+        </div>
+    </a>
+    {% empty %}
+    <p style="font-size: 13px; color: var(--color-text-muted);">No encontramos joyas para este mood todavía.</p>
+    {% endfor %}
+</div>

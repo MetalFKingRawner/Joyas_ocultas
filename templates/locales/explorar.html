@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if mood_seleccionado %}{{ mood_seleccionado.nombre }} — Joyas Ocultas{% else %}Explorar — Joyas Ocultas{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<section class="jo-search-header">
+    <div class="jo-container">
+        <h1 class="jo-h1" id="tituloExplorar">
+            {% if mood_seleccionado %}{{ mood_seleccionado.nombre }}{% else %}Explorando todas las joyas{% endif %}
+        </h1>
+        <p class="jo-search-subtitle">
+            {% if mood_seleccionado %}{{ resultados|length }} lugar{{ resultados|length|pluralize:"es" }} que coinciden con este mood{% else %}Elige un mood para afinar tu búsqueda{% endif %}
+        </p>
+
+        <div class="jo-moods">
+            <a href="{% url 'locales:explorar' %}"
+               hx-get="{% url 'locales:explorar' %}"
+               hx-target="#resultadosWrapper"
+               hx-select="#resultadosWrapper"
+               hx-push-url="true"
+               hx-indicator="#resultadosWrapper"
+               class="jo-mood-pill {% if not mood_seleccionado %}jo-mood-active{% endif %}">
+                <i class="ti ti-apps"></i> Todos
+            </a>
+            {% for mood in moods %}
+            <a href="{% url 'locales:explorar' %}?mood={{ mood.slug }}"
+               hx-get="{% url 'locales:explorar' %}?mood={{ mood.slug }}"
+               hx-target="#resultadosWrapper"
+               hx-select="#resultadosWrapper"
+               hx-push-url="true"
+               hx-indicator="#resultadosWrapper"
+               class="jo-mood-pill {% if mood_seleccionado.slug == mood.slug %}jo-mood-active{% endif %}">
+                <i class="ti ti-{{ mood.icono|default:'sparkles' }}"></i> {{ mood.nombre }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="jo-featured jo-reveal">
+    <div class="jo-container">
+        <div id="resultadosWrapper">
+            {% include 'locales/_resultados_grid.html' %}
+        </div>
+    </div>
+</section>
+
+<footer class="jo-footer">
+    <span>Joyas Ocultas · 2026</span>
+    <div class="jo-footer-icons">
+        <i class="ti ti-brand-instagram"></i>
+        <i class="ti ti-brand-tiktok"></i>
+    </div>
+</footer>
+
+{% endblock %}

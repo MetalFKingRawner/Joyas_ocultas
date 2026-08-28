@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Inicia sesión — Joyas Ocultas{% endblock %}
+{% block content %}
+<section class="jo-auth-page">
+    <div class="jo-auth-card jo-reveal">
+        <h1 class="jo-h1">Bienvenido de vuelta</h1>
+        <p class="jo-auth-subtitle">Inicia sesión para ver tu pasaporte y seguir coleccionando gemas.</p>
+        <form method="post" class="jo-form">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="jo-form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<small class="jo-form-error">{{ error }}</small>{% endfor %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="jo-btn-primary" style="width:100%; justify-content:center;">Iniciar sesión <i class="ti ti-arrow-right"></i></button>
+        </form>
+        <p class="jo-auth-footer">¿Aún no tienes cuenta? <a href="{% url 'usuarios:registro' %}">Regístrate</a></p>
+    </div>
+</section>
+{% endblock %}

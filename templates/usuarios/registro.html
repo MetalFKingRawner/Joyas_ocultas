@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Crea tu pasaporte — Joyas Ocultas{% endblock %}
+{% block content %}
+<section class="jo-auth-page">
+    <div class="jo-auth-card jo-reveal">
+        <h1 class="jo-h1">Crea tu pasaporte de explorador</h1>
+        <p class="jo-auth-subtitle">Regístrate para coleccionar gemas cada vez que visites una joya.</p>
+        <form method="post" class="jo-form">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="jo-form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                {% for error in field.errors %}<small class="jo-form-error">{{ error }}</small>{% endfor %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="jo-btn-primary" style="width:100%; justify-content:center;">Crear mi cuenta <i class="ti ti-arrow-right"></i></button>
+        </form>
+        <p class="jo-auth-footer">¿Ya tienes cuenta? <a href="{% url 'usuarios:login' %}">Inicia sesión</a></p>
+    </div>
+</section>
+{% endblock %}

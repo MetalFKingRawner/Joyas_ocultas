@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ local.nombre }} — Joyas Ocultas{% endblock %}
+
+{% block content %}
+
+<section class="jo-detail-hero">
+    <div class="jo-detail-hero-photo">
+        {% if fotos.first %}
+            <img src="{{ fotos.first.imagen.url }}" alt="{{ local.nombre }}">
+        {% else %}
+            <div class="jo-card-photo-placeholder">
+                <i class="ti ti-photo"></i>
+                Foto principal de {{ local.nombre }} (1600x900px aprox., horizontal, ambiente + producto)
+            </div>
+        {% endif %}
+        {% if local.es_socio_fundador %}
+        <span class="jo-founder-badge"><i class="ti ti-award"></i> Socio Fundador</span>
+        {% endif %}
+    </div>
+</section>
+
+<div class="jo-container jo-detail-layout">
+
+    <div class="jo-detail-main jo-reveal">
+        <div class="jo-detail-title-row">
+            <h1 class="jo-h1">{{ local.nombre }}</h1>
+            <span class="jo-gem-badge jo-gem-badge-lg" style="background: {{ local.gema_principal.color_hex }};">
+                {{ local.gema_principal.nombre }}
+            </span>
+        </div>
+
+        <div class="jo-detail-moods">
+            {% for mood in moods %}
+            <span class="jo-mood-pill jo-mood-pill-static">
+                <i class="ti ti-{{ mood.icono|default:'sparkles' }}"></i> {{ mood.nombre }}
+            </span>
+            {% endfor %}
+        </div>
+
+        <h2 class="jo-h2 jo-detail-subheading">La historia</h2>
+        <p class="jo-detail-historia">{{ local.historia }}</p>
+
+        {% if fotos.count > 1 %}
+        <h2 class="jo-h2 jo-detail-subheading">Galería</h2>
+        <div class="jo-gallery">
+            {% for foto in fotos %}
+                {% if not forloop.first %}
+                <div class="jo-gallery-item">
+                    <img src="{{ foto.imagen.url }}" alt="{{ local.nombre }}">
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <h2 class="jo-h2 jo-detail-subheading">Galería</h2>
+        <div class="jo-gallery">
+            <div class="jo-gallery-item jo-gallery-placeholder">
+                <i class="ti ti-photo-plus"></i>
+                <span>Foto 2 — interior/ambiente</span>
+            </div>
+            <div class="jo-gallery-item jo-gallery-placeholder">
+                <i class="ti ti-photo-plus"></i>
+                <span>Foto 3 — producto/menú</span>
+            </div>
+            <div class="jo-gallery-item jo-gallery-placeholder">
+                <i class="ti ti-photo-plus"></i>
+                <span>Foto 4 — detalle/gente</span>
+            </div>
+        </div>
+        {% endif %}
+        <h2 class="jo-h2 jo-detail-subheading">
+            Reseñas verificadas
+            {% if promedio %}<span class="jo-rating-avg">{{ promedio|floatformat:1 }} <i class="ti ti-star-filled"></i></span>{% endif %}
+        </h2>
+
+        {% if user.is_authenticated %}
+            {% if ha_visitado %}
+            <a href="{% url 'visitas:resena' local.slug %}" class="jo-review-cta">
+                <i class="ti ti-{% if mi_resena %}edit{% else %}pencil-plus{% endif %}"></i>
+                {% if mi_resena %}Editar mi reseña{% else %}Escribir una reseña{% endif %}
+            </a>
+            {% else %}
+            <p class="jo-empty-note"><i class="ti ti-lock"></i> Visita y escanea el QR de este local para poder reseñarlo.</p>
+            {% endif %}
+        {% else %}
+            <a href="{% url 'usuarios:login' %}?next={% url 'locales:detalle' local.slug %}" class="jo-empty-note">Inicia sesión para reseñar este lugar.</a>
+        {% endif %}
+
+        <div class="jo-reviews-list">
+            {% for r in resenas %}
+            <div class="jo-review-card">
+                <div class="jo-review-head">
+                    <strong>{{ r.usuario.perfilusuario.nombre_visible|default:r.usuario.username }}</strong>
+                    <span class="jo-review-stars">{% for i in "12345" %}<i class="ti ti-star{% if forloop.counter <= r.calificacion %}-filled{% endif %}"></i>{% endfor %}</span>
+                </div>
+                {% if r.comentario %}<p>{{ r.comentario }}</p>{% endif %}
+                <span class="jo-review-date">{{ r.fecha_creacion|date:"d M Y" }}{% if r.fecha_edicion != r.fecha_creacion %} · editada{% endif %}</span>
+            </div>
+            {% empty %}
+            <p class="jo-empty-note">Aún no hay reseñas — sé el primer explorador en dejar la tuya.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <aside class="jo-detail-sidebar jo-reveal">
+        <div class="jo-info-card">
+            <div class="jo-info-row">
+                <i class="ti ti-map-pin"></i>
+                <div>
+                    <strong>Dirección</strong>
+                    <p>{{ local.direccion }}</p>
+                </div>
+            </div>
+            <div class="jo-info-row">
+                <i class="ti ti-clock"></i>
+                <div>
+                    <strong>Horario</strong>
+                    <p>{{ local.dias_operacion }} · {{ local.horario_apertura|time:"g:i A" }} - {{ local.horario_cierre|time:"g:i A" }}</p>
+                </div>
+            </div>
+            {% if local.telefono %}
+            <div class="jo-info-row">
+                <i class="ti ti-phone"></i>
+                <div>
+                    <strong>Teléfono</strong>
+                    <p>{{ local.telefono }}</p>
+                </div>
+            </div>
+            {% endif %}
+            <div class="jo-info-row">
+                <i class="ti ti-currency-dollar"></i>
+                <div>
+                    <strong>Rango de precio</strong>
+                    <p>{{ local.rango_precio }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="jo-qr-card">
+            <i class="ti ti-qrcode"></i>
+            <p><strong>Escanea al llegar</strong></p>
+            {% if local.qr %}
+                <img src="{% url 'visitas:qr_imagen' local.qr.codigo_unico %}" alt="QR de {{ local.nombre }}" class="jo-qr-image">
+                <p class="jo-qr-note">Escanéalo al llegar para registrar tu visita y desbloquear la gema {{ local.gema_principal.nombre }}.</p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'visitas:escanear' local.qr.codigo_unico %}" class="jo-qr-simulate">¿Ya estás aquí? Simular escaneo <i class="ti ti-arrow-right"></i></a>
+                {% else %}
+                    <a href="{% url 'usuarios:login' %}?next={% url 'locales:detalle' local.slug %}" class="jo-qr-simulate">Inicia sesión para registrar tu visita</a>
+                {% endif %}
+            {% else %}
+                <p class="jo-qr-note">QR aún no generado para este local.</p>
+            {% endif %}
+        </div>
+        {% if tarjeta_fidelidad and tarjeta_fidelidad.activa %}
+        <div class="jo-loyalty-card">
+            <i class="ti ti-stamp"></i>
+            <p><strong>Tarjeta de fidelidad</strong></p>
+            <p class="jo-loyalty-reward">{{ tarjeta_fidelidad.recompensa_descripcion }} cada {{ tarjeta_fidelidad.visitas_requeridas }} visitas</p>
+
+            {% if user.is_authenticated %}
+                <div class="jo-loyalty-progress">
+                    <div class="jo-loyalty-progress-bar" style="width: {{ progreso_fidelidad.porcentaje }}%;"></div>
+                </div>
+                <p class="jo-loyalty-count">{{ progreso_fidelidad.visitas_acumuladas }} / {{ tarjeta_fidelidad.visitas_requeridas }} visitas</p>
+
+                {% if progreso_fidelidad.recompensa_disponible %}
+                <form method="post" action="{% url 'fidelidad:canjear' tarjeta_fidelidad.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="jo-btn-primary jo-loyalty-btn">Canjear recompensa <i class="ti ti-gift"></i></button>
+                </form>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'usuarios:login' %}?next={% url 'locales:detalle' local.slug %}" class="jo-qr-simulate">Inicia sesión para ver tu progreso</a>
+            {% endif %}
+        </div>
+        {% endif %}
+        <a href="{% url 'dashboard:local' local.slug %}" class="jo-dash-link">
+            <i class="ti ti-chart-bar"></i> Ver panel de negocio (demo)
+        </a>
+    </aside>
+
+</div>
+
+<footer class="jo-footer">
+    <span>Joyas Ocultas · 2026</span>
+    <div class="jo-footer-icons">
+        <i class="ti ti-brand-instagram"></i>
+        <i class="ti ti-brand-tiktok"></i>
+    </div>
+</footer>
+
+{% endblock %}

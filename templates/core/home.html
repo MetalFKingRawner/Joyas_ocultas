@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Joyas Ocultas — Tu mood. Tu lugar.{% endblock %}
+
+{% block content %}
+
+<section class="jo-hero">
+    <div class="jo-hero-text jo-reveal">
+        <h1 class="jo-h1">Tu mood. Tu lugar.</h1>
+        <p>Descubre restaurantes y cafeterías con alma, elegidos según cómo te sientes hoy.</p>
+        <div class="jo-moods">
+            {% for mood in moods %}
+            <a href="{% url 'locales:explorar' %}?mood={{ mood.slug }}" class="jo-mood-pill">
+                <i class="ti ti-{{ mood.icono|default:'sparkles' }}"></i> {{ mood.nombre }}
+            </a>
+            {% empty %}
+            <p style="font-size: var(--text-13); color: var(--color-text-muted);">Aún no hay moods cargados en el admin.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- ESPACIO RESERVADO PARA LA MASCOTA "EL EXPLORADOR" -->
+    <div class="jo-hero-mascot jo-reveal">
+        <div class="jo-hero-mascot-placeholder">
+            <i class="ti ti-map-2"></i>
+            <span>Aquí va "El Explorador" — pose sugerida: de pie, sosteniendo un mapa o lupa, mirando hacia el buscador. Fondo transparente, PNG/SVG, ~800x800px.</span>
+        </div>
+    </div>
+</section>
+
+<section class="jo-how jo-reveal">
+    <div class="jo-container">
+        <span class="jo-eyebrow jo-eyebrow--center"><i class="ti ti-route"></i> Tu ruta de exploración</span>
+        <h2 class="jo-h2">Cómo funciona</h2>
+        <p class="jo-how-subtitle">Cuatro pasos, un descubrimiento real cada vez.</p>
+
+        <div class="jo-trail">
+            <svg class="jo-trail-line" viewBox="0 0 700 100" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M 20 75 C 130 15, 220 15, 330 55 S 480 95, 590 45 S 650 20, 680 30" />
+            </svg>
+            <div class="jo-trail-steps">
+                <div class="jo-trail-step">
+                    <div class="jo-trail-pin">
+                        <div class="jo-trail-pin-inner">
+                            <i class="ti ti-search"></i>
+                            <span class="jo-trail-num">1</span>
+                        </div>
+                    </div>
+                    <p>Busca por mood</p>
+                </div>
+                <div class="jo-trail-step">
+                    <div class="jo-trail-pin">
+                        <div class="jo-trail-pin-inner">
+                            <i class="ti ti-map-pin"></i>
+                            <span class="jo-trail-num">2</span>
+                        </div>
+                    </div>
+                    <p>Descubre el lugar</p>
+                </div>
+                <div class="jo-trail-step">
+                    <div class="jo-trail-pin">
+                        <div class="jo-trail-pin-inner">
+                            <i class="ti ti-qrcode"></i>
+                            <span class="jo-trail-num">3</span>
+                        </div>
+                    </div>
+                    <p>Visita y escanea</p>
+                </div>
+                <div class="jo-trail-step">
+                    <div class="jo-trail-pin">
+                        <div class="jo-trail-pin-inner">
+                            <i class="ti ti-award"></i>
+                            <span class="jo-trail-num">4</span>
+                        </div>
+                    </div>
+                    <p>Colecciona tu gema</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="jo-featured jo-reveal">
+    <div class="jo-container">
+        <div class="jo-featured-head">
+            <h2 class="jo-h2">Joyas destacadas</h2>
+            <span>Elegidas al azar de nuestra colección</span>
+        </div>
+        <div class="jo-cards">
+            {% for local in locales_destacados %}
+            <a href="{% url 'locales:detalle' local.slug %}" class="jo-card">
+                <div class="jo-card-photo">
+                    {% if local.fotos.first %}
+                        <img src="{{ local.fotos.first.imagen.url }}" alt="{{ local.nombre }}">
+                    {% else %}
+                        <div class="jo-card-photo-placeholder">
+                            <i class="ti ti-photo"></i>
+                            Foto real de {{ local.nombre }} aquí (1200x800px aprox.)
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="jo-card-body">
+                    <div class="jo-card-top">
+                        <span class="jo-h2">{{ local.nombre }}</span>
+                        <span class="jo-gem-badge" style="background: {{ local.gema_principal.color_hex }};">
+                            {{ local.gema_principal.nombre }}
+                        </span>
+                    </div>
+                    <p>{{ local.descripcion_corta }}</p>
+                </div>
+            </a>
+            {% empty %}
+            <p style="font-size: var(--text-13); color: var(--color-text-muted);">Aún no hay locales cargados en el admin.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="jo-passport jo-reveal">
+    <div class="jo-passport-inner">
+        <h2 class="jo-h2">Tu pasaporte de explorador</h2>
+        <p>Colecciona una gema cada vez que visitas una joya</p>
+        <div class="jo-gems-preview">
+            <i class="ti ti-diamond" style="color: var(--color-rubi);"></i>
+            <i class="ti ti-diamond" style="color: var(--color-zafiro);"></i>
+            <i class="ti ti-diamond" style="color: var(--color-border);"></i>
+            <i class="ti ti-diamond" style="color: var(--color-border);"></i>
+            <i class="ti ti-diamond" style="color: var(--color-border);"></i>
+        </div>
+    </div>
+</section>
+
+<section class="jo-business jo-reveal" id="negocios">
+    <div class="jo-business-inner">
+        <div class="jo-business-copy">
+            <span class="jo-eyebrow"><i class="ti ti-building-store"></i> Para dueños de negocio</span>
+            <h2 class="jo-italic">¿Tienes un negocio con alma?</h2>
+            <p>Únete a Joyas Ocultas: visibilidad real ante exploradores que ya buscan lugares como el tuyo, cero costo durante el piloto.</p>
+            <ul class="jo-business-trust">
+                <li><i class="ti ti-circle-check"></i> Cero costo mientras dure el piloto</li>
+                <li><i class="ti ti-circle-check"></i> Tu propio código QR físico desde el día uno</li>
+                <li><i class="ti ti-circle-check"></i> Datos reales de quién te visita y cuándo</li>
+            </ul>
+            <a href="#" class="jo-btn-primary">Postula tu negocio <i class="ti ti-arrow-right"></i></a>
+        </div>
+
+        <div class="jo-business-preview">
+            <div class="jo-preview-titlebar">
+                <span class="jo-preview-dot"></span>
+                <span class="jo-preview-dot"></span>
+                <span class="jo-preview-dot"></span>
+                <span class="jo-preview-label">Vista previa — Tu Local</span>
+            </div>
+            <div class="jo-preview-body">
+                <div class="jo-preview-stats">
+                    <div class="jo-preview-stat">
+                        <strong>128</strong>
+                        <span>Visitas</span>
+                    </div>
+                    <div class="jo-preview-stat">
+                        <strong>34</strong>
+                        <span>Gemas</span>
+                    </div>
+                    <div class="jo-preview-stat">
+                        <strong>4.8</strong>
+                        <span>Rating</span>
+                    </div>
+                </div>
+                <div class="jo-preview-chart">
+                    <div class="jo-preview-chart-col" style="height: 35%;"></div>
+                    <div class="jo-preview-chart-col" style="height: 55%;"></div>
+                    <div class="jo-preview-chart-col" style="height: 40%;"></div>
+                    <div class="jo-preview-chart-col" style="height: 75%;"></div>
+                    <div class="jo-preview-chart-col" style="height: 60%;"></div>
+                    <div class="jo-preview-chart-col" style="height: 90%;"></div>
+                    <div class="jo-preview-chart-col" style="height: 70%;"></div>
+                </div>
+                <p class="jo-preview-note">Ejemplo ilustrativo — así se ve tu panel real</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="jo-footer">
+    <span>Joyas Ocultas · 2026</span>
+    <div class="jo-footer-icons">
+        <i class="ti ti-brand-instagram"></i>
+        <i class="ti ti-brand-tiktok"></i>
+    </div>
+</footer>
+
+{% endblock %}

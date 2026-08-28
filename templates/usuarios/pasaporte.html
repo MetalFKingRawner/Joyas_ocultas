@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Mi pasaporte — Joyas Ocultas{% endblock %}
+{% block content %}
+<section class="jo-passport-page">
+    <div class="jo-container">
+        <h1 class="jo-h1">Mi pasaporte de explorador</h1>
+        <p class="jo-auth-subtitle">Hola, {{ perfil_usuario.nombre_visible }}. Tienes {{ gemas.count }} gema{{ gemas.count|pluralize:"s" }} en tu colección.</p>
+
+        {% if insignias %}
+        <h2 class="jo-h2 jo-detail-subheading">Mis insignias</h2>
+        <div class="jo-badges-grid jo-reveal">
+            {% for iu in insignias %}
+            <div class="jo-badge-card">
+                <i class="ti ti-{{ iu.insignia.icono }}"></i>
+                <strong>{{ iu.insignia.nombre }}</strong>
+                <span>{{ iu.insignia.descripcion }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if gemas %}
+        <div class="jo-gems-grid jo-reveal">
+            {% for gema in gemas %}
+            <div class="jo-gem-card">
+                <i class="ti ti-diamond" style="color: {{ gema.tipo_gema.color_hex }};"></i>
+                <strong>{{ gema.tipo_gema.nombre }}</strong>
+                <span>{{ gema.local.nombre }}</span>
+                <small>{{ gema.fecha_obtenida|date:"d M Y" }}</small>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="jo-passport-empty jo-reveal">
+            <i class="ti ti-diamond"></i>
+            <p>Tu colección aparecerá aquí</p>
+            <a href="{% url 'locales:explorar' %}" class="jo-btn-primary">Explorar joyas <i class="ti ti-arrow-right"></i></a>
+        </div>
+        {% endif %}
+    </div>
+    {% if progresos %}
+    <h2 class="jo-h2 jo-detail-subheading">Mis tarjetas de fidelidad</h2>
+    <div class="jo-loyalty-grid jo-reveal">
+        {% for p in progresos %}
+        <div class="jo-loyalty-card">
+            <strong>{{ p.tarjeta.local.nombre }}</strong>
+            <p class="jo-loyalty-reward">{{ p.tarjeta.recompensa_descripcion }}</p>
+            <div class="jo-loyalty-progress">
+                <div class="jo-loyalty-progress-bar" style="width: {{ p.porcentaje }}%;"></div>
+            </div>
+            <p class="jo-loyalty-count">{{ p.visitas_acumuladas }} / {{ p.tarjeta.visitas_requeridas }} visitas</p>
+            {% if p.recompensa_disponible %}
+            <span class="jo-loyalty-ready"><i class="ti ti-gift"></i> ¡Lista para canjear!</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

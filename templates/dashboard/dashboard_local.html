@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Panel de {{ local.nombre }} — Joyas Ocultas{% endblock %}
+{% block content %}
+
+<section class="jo-dash-header">
+    <div class="jo-container">
+        <span class="jo-dash-label"><i class="ti ti-chart-bar"></i> Panel de negocio (demo)</span>
+        <h1 class="jo-h1">{{ local.nombre }}</h1>
+        <p class="jo-auth-subtitle">Así es como se vería tu diagnóstico gratuito al final del mes de piloto.</p>
+    </div>
+</section>
+
+<div class="jo-container jo-dash-body">
+
+    <div class="jo-dash-stats jo-reveal">
+        <div class="jo-stat-card">
+            <i class="ti ti-qrcode"></i>
+            <span class="jo-stat-number">{{ total_visitas }}</span>
+            <span class="jo-stat-label">Visitas totales (QR)</span>
+        </div>
+        <div class="jo-stat-card">
+            <i class="ti ti-users"></i>
+            <span class="jo-stat-number">{{ visitantes_unicos }}</span>
+            <span class="jo-stat-label">Visitantes únicos</span>
+        </div>
+        <div class="jo-stat-card">
+            <i class="ti ti-repeat"></i>
+            <span class="jo-stat-number">{{ clientes_recurrentes }}</span>
+            <span class="jo-stat-label">Clientes recurrentes</span>
+        </div>
+        <div class="jo-stat-card">
+            <i class="ti ti-diamond"></i>
+            <span class="jo-stat-number">{{ gemas_otorgadas }}</span>
+            <span class="jo-stat-label">Gemas otorgadas</span>
+        </div>
+        <div class="jo-stat-card">
+            <i class="ti ti-gift"></i>
+            <span class="jo-stat-number">{{ recompensas_canjeadas }}</span>
+            <span class="jo-stat-label">Recompensas canjeadas</span>
+        </div>
+        <div class="jo-stat-card">
+            <i class="ti ti-calendar-event"></i>
+            <span class="jo-stat-number">{{ visitas_hoy }}</span>
+            <span class="jo-stat-label">Visitas hoy</span>
+        </div>
+
+        <div class="jo-stat-card">
+            <i class="ti ti-user-plus"></i>
+            <span class="jo-stat-number">{{ usuarios_referidos }}</span>
+            <span class="jo-stat-label">Usuarios que trajiste</span>
+        </div>
+    </div>
+
+    <div class="jo-dash-grid">
+
+        <div class="jo-dash-panel jo-reveal">
+            <h2 class="jo-h2 jo-detail-subheading">Visitas — últimos 7 días</h2>
+            <div class="jo-bar-chart">
+                {% for d in visitas_por_dia %}
+                <div class="jo-bar-col">
+                    <div class="jo-bar" style="height: {{ d.porcentaje }}%;" title="{{ d.total }} visitas"></div>
+                    <span class="jo-bar-label">{{ d.fecha|date:"D" }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="jo-dash-panel jo-reveal">
+            <h2 class="jo-h2 jo-detail-subheading">Horas pico</h2>
+            {% if hora_pico_qs %}
+            <ul class="jo-peak-list">
+                {% for h in hora_pico_qs %}
+                <li><i class="ti ti-clock"></i> {{ h.hora }}:00 — {{ h.total }} visita{{ h.total|pluralize:"s" }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="jo-empty-note">Aún no hay suficientes visitas registradas para calcular horas pico.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <div class="jo-dash-panel jo-reveal">
+        <h2 class="jo-h2 jo-detail-subheading">Visitas recientes</h2>
+        {% if visitas_recientes %}
+        <table class="jo-dash-table">
+            <thead>
+                <tr><th>Explorador</th><th>Fecha</th><th>Hora</th></tr>
+            </thead>
+            <tbody>
+                {% for v in visitas_recientes %}
+                <tr>
+                    <td>{{ v.usuario.perfilusuario.nombre_visible|default:v.usuario.username }}</td>
+                    <td>{{ v.fecha_hora|date:"d M Y" }}</td>
+                    <td>{{ v.fecha_hora|time:"g:i A" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="jo-empty-note">Aún no hay visitas registradas en este local.</p>
+        {% endif %}
+    </div>
+
+    <div class="jo-dash-cta jo-reveal">
+        <i class="ti ti-award"></i>
+        <p>Esto es solo el comienzo — durante el mes de piloto este panel se va llenando con datos reales de tus clientes, sin costo y sin necesidad de configurar nada.</p>
+    </div>
+
+</div>
+
+{% endblock %}

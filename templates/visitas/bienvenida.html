@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}{{ local.nombre }} te invitó — Joyas Ocultas{% endblock %}
+{% block content %}
+
+<section class="jo-welcome-page">
+    <div class="jo-welcome-card jo-reveal">
+
+        <div class="jo-welcome-photo">
+            {% if local.fotos.first %}
+                <img src="{{ local.fotos.first.imagen.url }}" alt="{{ local.nombre }}">
+            {% else %}
+                <div class="jo-card-photo-placeholder">
+                    <i class="ti ti-photo"></i> Foto de {{ local.nombre }}
+                </div>
+            {% endif %}
+            {% if local.es_socio_fundador %}
+            <span class="jo-founder-badge"><i class="ti ti-award"></i> Socio Fundador</span>
+            {% endif %}
+        </div>
+
+        <div class="jo-welcome-body">
+            <span class="jo-welcome-eyebrow"><i class="ti ti-diamond"></i> {{ local.nombre }} te invitó</span>
+            <h1 class="jo-h1">Bienvenido a Joyas Ocultas</h1>
+            <p class="jo-welcome-text">Tu mood. Tu lugar. Descubre rincones con alma y colecciona una gema cada vez que los visitas — empezando por {{ local.nombre }}, justo ahora.</p>
+
+            <div class="jo-gem-preview">
+                <i class="ti ti-diamond" style="color: {{ local.gema_principal.color_hex }};"></i>
+                <span>Estás a un paso de desbloquear la gema <strong>{{ local.gema_principal.nombre }}</strong></span>
+            </div>
+
+            <div class="jo-welcome-actions">
+                <a href="{{ url_registro }}" class="jo-btn-primary" style="justify-content:center;">Crear mi pasaporte <i class="ti ti-arrow-right"></i></a>
+                <a href="{{ url_login }}" class="jo-btn-secondary">Ya tengo cuenta — Iniciar sesión</a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
