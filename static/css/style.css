@@ -263,6 +263,13 @@ body {
     border: var(--border-width-dashed) dashed var(--color-border);
 }
 
+.jo-hero-mascot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* o "cover" si quieres que recorte y llene el círculo/cuadro */
+    border-radius: inherit;
+}
+
 .jo-hero-mascot-placeholder {
     text-align: center;
     padding: var(--space-24);
