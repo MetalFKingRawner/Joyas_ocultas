@@ -1,3 +1,6 @@
+django-htmx
+psycopg2-binary
+Pillow
 dj_database_url
 Django==5.0.3
 python-dotenv==1.2.3
