@@ -1,4 +1,8 @@
-dj_database_url==3.0.0
+dj_database_url
 Django==5.0.3
 python-dotenv==1.2.3
 qrcode==8.2
+gunicorn
+whitenoise
+cloudinary
+django-cloudinary-storage
